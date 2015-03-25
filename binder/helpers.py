@@ -80,7 +80,7 @@ def add_cname_record(dns_server, zone_name, cname, originating_record, ttl, key_
     return [{ "description" : "CNAME %s.%s points to %s" % (cname, zone_name, originating_record),
               "output" : output}]
 
-def delete_record(dns_server, rr_list, key_name):
+def delete_record(dns_server, zone_name, rr_list, key_name):
     """Delete a list of DNS records passed as strings in rr_items."""
 
     try:
@@ -92,17 +92,16 @@ def delete_record(dns_server, rr_list, key_name):
         keyring = transfer_key.create_keyring()
         algorithm = transfer_key.algorithm
 
-    delete_response = []
-    for current_rr in rr_list:
-        record_list = current_rr.split(".")
-        record = record_list[0]
-        domain = ".".join(record_list[1:])
-        dns_update = dns.update.Update(domain, keyring=keyring, keyalgorithm=algorithm)
-        dns_update.delete(record)
-        output = send_dns_update(dns_update, dns_server, key_name)
+    dns_update = dns.update.Update(zone_name, keyring=keyring, keyalgorithm=algorithm)
+    records = []
+    for resource_record in rr_list:
+        dns_update.delete(resource_record)
+        records.append("%s.%s" % (zone_name, resource_record))
 
-        delete_response.append({ "description" : "Delete Record: %s" % current_rr,
-                                 "output" : output })
+    output = send_dns_update(dns_update, dns_server, key_name)
+    delete_response = [{"description": "Deleted Records:<br/>%s" %
+                        '<br />'.join(records),
+                        "output": output}]
 
     return delete_response
 

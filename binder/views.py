@@ -204,6 +204,7 @@ def view_delete_result(request):
         print "in view_delete_result, form errors: %r" % form.errors
 
     delete_result = helpers.delete_record(clean_form["dns_server"],
+                                          clean_form["zone_name"],
                                           clean_form["rr_list"],
                                           clean_form["key_name"])
 

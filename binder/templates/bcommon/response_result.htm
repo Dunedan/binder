@@ -10,7 +10,7 @@
   <th>Output</th>
 </tr>
 <tr>
-  <td>{{ current_response.description }}</td>
+  <td>{{ current_response.description|safe }}</td>
   <td><pre>{{ current_response.output }}</pre></td>
 </tr>
 {% endfor %}
