@@ -96,7 +96,7 @@ def delete_record(dns_server, zone_name, rr_list, key_name):
     records = []
     for resource_record in rr_list:
         dns_update.delete(resource_record)
-        records.append("%s.%s" % (zone_name, resource_record))
+        records.append("%s.%s" % (resource_record, zone_name))
 
     output = send_dns_update(dns_update, dns_server, key_name)
     delete_response = [{"description": "Deleted Records:<br/>%s" %
